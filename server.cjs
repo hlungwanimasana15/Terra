@@ -1,4 +1,6 @@
-require('dotenv').config();  // add this line at top to load env variables
+require('dotenv').config(); // load env variables
+
+console.log('Loaded API key:', process.env.OPENROUTER_API_KEY ? 'Yes' : 'No');
 
 const express = require('express');
 const path = require('path');
@@ -11,12 +13,14 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Serve React frontend build
+// Serve React frontend (if built)
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.post('/generate', async (req, res) => {
   const { grade, subject, type } = req.body;
   const prompt = `Generate a ${type} for ${subject} for a ${grade} student.`;
+   
+  console.log('Using API key:', process.env.OPENROUTER_API_KEY);
 
   try {
     const response = await axios.post(
@@ -30,10 +34,8 @@ app.post('/generate', async (req, res) => {
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`, 
+          'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
           'Content-Type': 'application/json',
-          // Remove HTTP-Referer unless needed
-          //'HTTP-Referer': 'http://localhost:3000',
           'X-Title': 'Educational-Generator',
         },
       }
@@ -46,10 +48,11 @@ app.post('/generate', async (req, res) => {
   }
 });
 
+// Fallback for React app
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`✅ Server running on http://localhost:${PORT}`);
 });
