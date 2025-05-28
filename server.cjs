@@ -1,4 +1,4 @@
-require('dotenv').config(); // load env variables
+require('dotenv').config(); 
 
 console.log('Loaded API key:', process.env.OPENROUTER_API_KEY ? 'Yes' : 'No');
 
@@ -13,8 +13,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Serve React frontend (if built)
-app.use(express.static(path.join(__dirname, 'client/build')));
+
+//app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.post('/generate', async (req, res) => {
   const { grade, subject, type } = req.body;
@@ -48,7 +48,7 @@ app.post('/generate', async (req, res) => {
   }
 });
 
-// Fallback for React app
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
